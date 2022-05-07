@@ -56,7 +56,7 @@ void draw_on_image(const Cairo::RefPtr<Cairo::Context> cr,
   std::cout << "Button1 clicked: pixbuf shown" << std::endl;
 }
 
-void on_draw1_draw(Cairo::RefPtr<Cairo::Context> cr) {
+void on_draw1_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   std::cout << "on_draw1_draw: entering" << std::endl;
 
   // coordinates for the center of the window
