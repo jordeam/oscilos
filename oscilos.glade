@@ -277,20 +277,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkImage" id="img_1">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
-                    <property name="stock">gtk-help</property>
-                    <property name="icon_size">6</property>
-                    <signal name="button-press-event" handler="on_img_1_button_press_event" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">0</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkDrawingArea" id="draw1">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -311,6 +297,24 @@
                   <packing>
                     <property name="left-attach">0</property>
                     <property name="top-attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEventBox" id="event1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkImage" id="img_1">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="stock">gtk-help</property>
+                        <property name="icon_size">6</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
               </object>

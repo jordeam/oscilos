@@ -6,6 +6,7 @@
 #include "glibmm/refptr.h"
 #include "gtkmm/button.h"
 #include "gtkmm/drawingarea.h"
+#include "gtkmm/eventbox.h"
 #include "gtkmm/image.h"
 #include "gdkmm/pixbuf.h"
 
@@ -33,8 +34,8 @@ bool draw1_button_press(GdkEventButton *event) {
   return true;
 }
 
-bool img1_button_press(GdkEventButton *event) {
-  std::cout << "button press on img1" << std::endl;
+bool ev1_button_press(GdkEventButton *event) {
+  std::cout << "button press on img1: " << event->x << " " << event->y << std::endl;
   return true;
 }
 
@@ -87,9 +88,12 @@ int main(int argc, char *argv[]) {
   draw1->signal_draw().connect([](Cairo::RefPtr<Cairo::Context> cr) -> bool {draw1_draw(cr); return false;
   });
 
-      Gtk::Image *img1;
+  Gtk::Image *img1;
   builder->get_widget("img_1", img1);
-  img1->signal_button_press_event().connect(sigc::ptr_fun(&img1_button_press));
+
+  Gtk::EventBox *ev1;
+  builder->get_widget("event1", ev1);
+  ev1->signal_button_press_event().connect(sigc::ptr_fun(&ev1_button_press));
 
   Gdk::Colorspace format_pix = Gdk::Colorspace::COLORSPACE_RGB;
   Cairo::Format format = Cairo::FORMAT_RGB24;
