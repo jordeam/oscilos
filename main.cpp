@@ -20,12 +20,15 @@
 int picture_width = 600;
 int picture_height = 300;
 
-bool draw1_draw(const Cairo::RefPtr<Cairo::Context> cr) {
-  int width = 100;
-  int height = 100;
-  cr->set_source_rgb(1, 1, 0);
-  cr->rectangle(width * .25, height * .25, width * .5, height * .5);
-  cr->fill();
+bool draw1_draw(const Cairo::RefPtr<Cairo::Context> & cr, const Glib::RefPtr<Gdk::Pixbuf> &pixbuf_ref) {
+  int width = pixbuf_ref->get_width();
+  int height = pixbuf_ref->get_height();
+  Gdk::Cairo::set_source_pixbuf(cr, pixbuf_ref, 0, 0);
+  cr->paint();
+  std::cout << "draw1_draw: w=" << width << " h=" << height << std::endl;
+  //  cr->set_source_rgb(1, 1, 0);
+  //cr->rectangle(width * .25, height * .25, width * .25, height * .25);
+  //cr->fill();
   return false;
 }
 
@@ -81,19 +84,9 @@ int main(int argc, char *argv[]) {
 
   Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_file("oscilos.glade");
 
-  Gtk::DrawingArea *draw1;
-  builder->get_widget("draw1", draw1);
-  draw1->set_size_request(600, 300);
-  draw1->signal_button_press_event().connect(sigc::ptr_fun(&draw1_button_press));
-  draw1->signal_draw().connect([](Cairo::RefPtr<Cairo::Context> cr) -> bool {draw1_draw(cr); return false;
-  });
-
   Gtk::Image *img1;
   builder->get_widget("img_1", img1);
 
-  Gtk::EventBox *ev1;
-  builder->get_widget("event1", ev1);
-  ev1->signal_button_press_event().connect(sigc::ptr_fun(&ev1_button_press));
 
   Gdk::Colorspace format_pix = Gdk::Colorspace::COLORSPACE_RGB;
   Cairo::Format format = Cairo::FORMAT_RGB24;
@@ -127,6 +120,21 @@ int main(int argc, char *argv[]) {
   cr->move_to(xc, yc);
   cr->line_to(picture_width, yc);
   cr->stroke();
+
+  Gtk::DrawingArea *draw1;
+  builder->get_widget("draw1", draw1);
+  draw1->set_size_request(600, 300);
+  draw1->signal_button_press_event().connect(
+      sigc::ptr_fun(&draw1_button_press));
+  draw1->signal_draw().connect(
+      [pixbuf_ref](Cairo::RefPtr<Cairo::Context> cr) -> bool {
+        draw1_draw(cr, pixbuf_ref);
+        return false;
+      });
+
+  Gtk::EventBox *ev1;
+  builder->get_widget("event1", ev1);
+  ev1->signal_button_press_event().connect(sigc::ptr_fun(&ev1_button_press));
 
   Gtk::Button *btn1;
   builder->get_widget("button1", btn1);
