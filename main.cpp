@@ -4,12 +4,17 @@
 #include "cairomm/surface.h"
 #include "gdkmm/general.h"
 #include "glibmm/refptr.h"
+#include "gtkmm/box.h"
 #include "gtkmm/button.h"
+#include "gtkmm/checkbutton.h"
 #include "gtkmm/drawingarea.h"
 #include "gtkmm/eventbox.h"
+#include "gtkmm/hvbox.h"
 #include "gtkmm/image.h"
 #include "gdkmm/pixbuf.h"
 
+#include "gtkmm/listbox.h"
+#include "gtkmm/listboxrow.h"
 #include "sigc++/functors/ptr_fun.h"
 #include <gtkmm.h>
 #include <iostream>
@@ -33,30 +38,9 @@ bool draw1_draw(const Cairo::RefPtr<Cairo::Context> & cr, const Glib::RefPtr<Gdk
 }
 
 bool draw1_button_press(GdkEventButton *event) {
-  std::cout << "button press on draw1" << std::endl;
+  std::cout << "button press on draw1: " << event->x << " " << event->y
+            << std::endl;
   return true;
-}
-
-bool ev1_button_press(GdkEventButton *event) {
-  std::cout << "button press on img1: " << event->x << " " << event->y << std::endl;
-  return true;
-}
-
-void draw_on_image(const Cairo::RefPtr<Cairo::Context> cr,
-                   Glib::RefPtr<Gdk::Pixbuf> pixbuf_ref) {
-  int width = pixbuf_ref->get_width();
-  int height = pixbuf_ref->get_height();
-  /* Draw the pixbuf */
-
-  /* Draw the pixbuf */
-  // TODO need this? because surface was created directly from pixbuf?
-  //cr->set_source(pixbuf_ref);
-  cr->paint();
-  /* Draw a red rectangle */
-  cr->set_source_rgb(1, 1, 0);
-  cr->rectangle(width * .25, height * .25, width * .5, height * .5);
-  cr->fill();
-  std::cout << "Button1 clicked: pixbuf shown" << std::endl;
 }
 
 void on_draw1_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
@@ -79,13 +63,33 @@ void on_draw1_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   cr->stroke();
 }
 
+class MyListRow : public Gtk::ListBoxRow {
+public:
+  MyListRow(const std::string text) : label{text}, box {false, 1} {
+    box.pack_start(label);
+    box.pack_start(check);
+    set_halign(Gtk::Align::ALIGN_START);
+    label.set_size_request(150);
+    check.set_label("active");
+    check.activate();
+    check.set_size_request(50);
+    show_all_children();
+    label.show();
+    check.show();
+    box.show();
+  }
+
+protected:
+  Gtk::HBox box;
+  Gtk::Label label;
+  Gtk::CheckButton check;
+};
+
+
 int main(int argc, char *argv[]) {
   Gtk::Main gtkmain(argc, argv);
 
   Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_file("oscilos.glade");
-
-  Gtk::Image *img1;
-  builder->get_widget("img_1", img1);
 
 
   Gdk::Colorspace format_pix = Gdk::Colorspace::COLORSPACE_RGB;
@@ -102,8 +106,6 @@ int main(int argc, char *argv[]) {
   cr->fill();
 
   auto pixbuf_ref = Gdk::Pixbuf::create_from_data(surface->get_data(), Gdk::COLORSPACE_RGB, true, 8, surface->get_width(), surface->get_height(), surface->get_stride());
-
-  img1->set(pixbuf_ref);
 
   // coordinates for the center of the window
   int xc, yc;
@@ -123,27 +125,30 @@ int main(int argc, char *argv[]) {
 
   Gtk::DrawingArea *draw1;
   builder->get_widget("draw1", draw1);
-  draw1->set_size_request(600, 300);
-  draw1->signal_button_press_event().connect(
-      sigc::ptr_fun(&draw1_button_press));
-  draw1->signal_draw().connect(
+  draw1->set_size_request(picture_width, picture_height);
+  draw1->signal_button_press_event()
+    .connect(sigc::ptr_fun(&draw1_button_press));
+  draw1->signal_draw()
+    .connect(
       [pixbuf_ref](Cairo::RefPtr<Cairo::Context> cr) -> bool {
         draw1_draw(cr, pixbuf_ref);
         return false;
       });
 
-  Gtk::EventBox *ev1;
-  builder->get_widget("event1", ev1);
-  ev1->signal_button_press_event().connect(sigc::ptr_fun(&ev1_button_press));
-
   Gtk::Button *btn1;
   builder->get_widget("button1", btn1);
   btn1->signal_clicked()
-    .connect([cr, img1, pixbuf_ref]() {
+    .connect([cr]() {
       on_draw1_draw(cr);
-      // refresh GtkImage
-      img1->set(pixbuf_ref);
     });
+
+  Gtk::ListBox *list1;
+  builder->get_widget("list1", list1);
+  for (int i = 0; i < 20; i++) {
+    auto row = Gtk::manage(new MyListRow{"teste 1"});
+    list1->append(*row);
+    row->show();
+  }
 
   Gtk::Window *win;
   builder->get_widget("win_main", win);
