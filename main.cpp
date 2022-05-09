@@ -13,8 +13,10 @@
 #include "gtkmm/image.h"
 #include "gdkmm/pixbuf.h"
 
+#include "gtkmm/label.h"
 #include "gtkmm/listbox.h"
 #include "gtkmm/listboxrow.h"
+#include "gtkmm/object.h"
 #include "sigc++/functors/ptr_fun.h"
 #include <gtkmm.h>
 #include <iostream>
@@ -144,17 +146,31 @@ int main(int argc, char *argv[]) {
 
   Gtk::ListBox *list1;
   builder->get_widget("list1", list1);
-  for (int i = 0; i < 20; i++) {
-    auto row = Gtk::manage(new MyListRow{"teste 1"});
-    list1->append(*row);
-    row->show();
+
+  // Gtk::Box *box1;
+  // builder->get_widget("box1", box1);
+
+  for (int i = 0; i < 40; i++) {
+    auto hbox1 = Gtk::manage(new Gtk::HBox);
+
+    auto label1 = Gtk::manage(new Gtk::Label {"teste 1 criativo"});
+    label1->show();
+    hbox1->pack_start(*label1);
+
+    auto chk1 = Gtk::manage(new Gtk::CheckButton {""});
+    chk1->set_active(true);
+    chk1->show();
+    hbox1->pack_start(*chk1);
+    hbox1->show();
+    list1->append(*hbox1);
+    // box1->pack_start(*hbox1);
   }
 
-  Gtk::Window *win;
-  builder->get_widget("win_main", win);
-  win->set_title("Oscilos");
-  Gtk::Main::run(*win);
+    Gtk::Window *win;
+    builder->get_widget("win_main", win);
+    win->set_title("Oscilos");
+    Gtk::Main::run(*win);
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
