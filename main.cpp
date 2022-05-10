@@ -65,29 +65,6 @@ void on_draw1_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   cr->stroke();
 }
 
-class MyListRow : public Gtk::ListBoxRow {
-public:
-  MyListRow(const std::string text) : label{text}, box {false, 1} {
-    box.pack_start(label);
-    box.pack_start(check);
-    set_halign(Gtk::Align::ALIGN_START);
-    label.set_size_request(150);
-    check.set_label("active");
-    check.activate();
-    check.set_size_request(50);
-    show_all_children();
-    label.show();
-    check.show();
-    box.show();
-  }
-
-protected:
-  Gtk::HBox box;
-  Gtk::Label label;
-  Gtk::CheckButton check;
-};
-
-
 int main(int argc, char *argv[]) {
   Gtk::Main gtkmain(argc, argv);
 
@@ -161,9 +138,9 @@ int main(int argc, char *argv[]) {
     chk1->set_active(true);
     chk1->show();
     hbox1->pack_start(*chk1);
+
     hbox1->show();
     list1->append(*hbox1);
-    // box1->pack_start(*hbox1);
   }
 
     Gtk::Window *win;

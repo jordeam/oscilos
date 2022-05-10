@@ -29,3 +29,5 @@ add_executable(main main.cpp)
 #target_include_directories(main_pmsm PRIVATE /usr/include/bms ../../elepot-progs/lib/control ${Glib_INCLUDE_DIRS})
 target_link_libraries(main -lm -lgsl -lblas -lbms PkgConfig::deps  ${GTK3_LIBRARIES})
 
+add_executable(main_dnd main_dnd.cpp dndwindow.cpp)
+target_link_libraries(main_dnd -lm -lgsl -lblas -lbms PkgConfig::deps  ${GTK3_LIBRARIES})
