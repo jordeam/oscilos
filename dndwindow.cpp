@@ -77,16 +77,22 @@ void DnDWindow::on_button_drag_data_get(
         const Glib::RefPtr<Gdk::DragContext>& dc,
         Gtk::SelectionData& selection_data, guint, guint)
 {
+  std::stringstream s;
+  int i { 1 };
+
+  s << "Data " << i;
+  std::string ss { s.str() };
+
   selection_data.set(selection_data.get_target(), 8 /* 8 bits format */,
-          (const guchar*)"I'm Data!",
-          9 /* the length of I'm Data! in bytes */);
+          (const guchar*) ss.c_str(),
+          ss.length() /* the length of I'm Data! in bytes */);
 }
 
 void DnDWindow::on_other_button_drag_data_get(const Glib::RefPtr<Gdk::DragContext> &,
                                         Gtk::SelectionData &selection_data,
                                         guint, guint) {
   selection_data.set(selection_data.get_target(), 8 /* 8 bits format */,
-                     (const guchar *)"I'm Data other button!",
+                     (const guchar *) "I'm Data other button!",
                      22 /* the length of I'm Data! in bytes */);
 }
 
